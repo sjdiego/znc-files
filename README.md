@@ -13,8 +13,11 @@ Repository of files to have a ZNC instance and backup log files into S3 bucket.
 Just start it with docker using the following command:
 - `docker-compose up`
 
-## How to backup log files
+## Deployment of S3 bucket using Cloudformation
+Execute the following command:
+- `aws cloudformation deploy --stack-name <your-desired-stack-name> --template-file stack.yml --capabilities CAPABILITY_IAM`
 
+## How to backup log files
 Before using this script you should have aws-cli already configured and authenticated, and a ping endpoint in healthchecks.io
 
 The backup script performs the following operations:
