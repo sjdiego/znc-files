@@ -27,7 +27,7 @@ def check_args():
     dest = sys.argv[2]
     now = datetime.now()
     backup_file = "/tmp/" + now.strftime("%Y-%m-%d_%H-%M-%S_") + dest + ".tar.gz"
-    s3_filename = now.strftime("%Y-%m-%d_%H-%M-%S_") + dest + "tar.gz"
+    s3_filename = now.strftime("%Y-%m-%d_%H-%M-%S_") + dest + ".tar.gz"
 
     if os.path.isfile(backup_file):
         print("File already exists. Leaving...")
