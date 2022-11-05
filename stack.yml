@@ -15,6 +15,15 @@ Resources:
           - ObjectOwnership: BucketOwnerEnforced
       VersioningConfiguration:
         Status: Suspended
+      LifecycleConfiguration:
+        Rules:
+          - Id: StandardIARule
+            Prefix: standard-ia
+            Status: Enabled
+            #ExpirationInDays: 365
+            Transitions:
+              - TransitionInDays: 30
+                StorageClass: STANDARD_IA
 
   ZNCLogsBackupUser:
     Type: AWS::IAM::User
@@ -41,4 +50,3 @@ Outputs:
 
   ZNCLogsBackupUser:
     Value: !Ref ZNCLogsBackupUser
-
