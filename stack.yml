@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Resources:
+
+  ZNCLogsBackupBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        RestrictPublicBuckets: true
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      VersioningConfiguration:
+        Status: Suspended
+
+  ZNCLogsBackupUser:
+    Type: AWS::IAM::User
+    Properties:
+      Policies:
+        - PolicyName: s3-access
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 's3:*MultipartUpload*'
+                  - 's3:ListBucket'
+                  - 's3:GetObject'
+                  - 's3:PutObject'
+                Resource:
+                  - !Sub '${ZNCLogsBackupBucket.Arn}'
+                  - !Sub '${ZNCLogsBackupBucket.Arn}/*'
+
+Outputs:
+
+  ZNCLogsBackupBucket:
+    Value: !Ref ZNCLogsBackupBucket
+
+  ZNCLogsBackupUser:
+    Value: !Ref ZNCLogsBackupUser
+
