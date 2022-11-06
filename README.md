@@ -7,7 +7,7 @@ Repository of files to have a ZNC instance and backup log files into S3 bucket.
 - Docker
 - aws-cli
 - AWS account with S3 permissions
-- <Healthchecks.io> account
+- [Healthchecks.io](https://www.healthchecks.io) account
 
 ## How to start ZNC
 Just start it with docker using the following command:
