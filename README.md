@@ -28,5 +28,6 @@ The backup script performs the following operations:
 - Confirms operation to Healtchecks.io
 
 ## Create a cronjob for backup
-Just add an entry into your cron file like this:
-- `0 2 * * MON python3 backup.py ./config/users/<your-user>/networks/<your-network>/moddata/log znclogs <your-s3-bucket-name> https://hc-ping.com/<endpoint-uuid> >> ./backup.log 2>&1`
+Rename cronjob.example.sh, chmod +x it and add an entry into your cron file like this:
+- `0 2 * * MON ~/znc/cronjob.sh >> ~/znc/backup.log 2>&1`
+

@@ -1,3 +1,4 @@
 /config
 *.tar.gz
 backup.log
+cronjob.sh
