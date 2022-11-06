@@ -7,7 +7,7 @@ Repository of files to have a ZNC instance and backup log files into S3 bucket.
 - Docker
 - aws-cli
 - AWS account with S3 permissions
-- Healtchecks.io account
+- <Healthchecks.io> account
 
 ## How to start ZNC
 Just start it with docker using the following command:
@@ -25,7 +25,7 @@ The backup script performs the following operations:
 - Removes old log files (it should be already backup'd) and empty directories
 - Looks for newest log files and creates a tar.gz file in /tmp
 - Uploads tar.gz file to S3 bucket
-- Confirms operation to Healtchecks.io
+- Confirms operation to Healthchecks.io
 
 ## Create a cronjob for backup
 Rename cronjob.example.sh, chmod +x it and add an entry into your cron file like this:
