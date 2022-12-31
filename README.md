@@ -14,12 +14,8 @@ Repository of files to have a ZNC instance and backup log files into S3 bucket.
 Just start it with docker using the following command:
 - `docker-compose up`
 
-## Deployment of S3 bucket using Cloudformation
-Execute the following command:
-- `aws cloudformation deploy --stack-name <your-desired-stack-name> --template-file stack.yml --capabilities CAPABILITY_IAM`
-
 ## How to backup log files
-Before using this script you should have aws-cli already configured and authenticated, and a ping endpoint in healthchecks.io
+Before using the backup log script you should have aws-cli already configured and authenticated, and a ping endpoint in healthchecks.io
 
 The backup script performs the following operations:
 - Checks for the required parameters
@@ -29,11 +25,15 @@ The backup script performs the following operations:
 - Uploads tar.gz file to S3 bucket
 - Confirms operation to Healthchecks.io
 
+## Deployment of S3 bucket using Cloudformation
+Execute the following command:
+- `aws cloudformation deploy --stack-name <your-desired-stack-name> --template-file stack.yml --capabilities CAPABILITY_IAM`
+
 ## Create a cronjob for backup
 Rename cronjob.example.sh, modify it with encryption password, chmod +x it and add an entry into your cron file like this:
 - `0 2 * * MON ~/znc/cronjob.sh >> ~/znc/backup.log 2>&1`
 
-## How to decrypt file
+## How to decrypt backup log file
 Execute the following commands:
 
 ```
