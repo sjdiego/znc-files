@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export ENCRYPTION_PASS=
+
 python3 backup.py \
   ~/znc/config/users/nerdyuser/networks/libera/moddata/log \
   znclogs \
