@@ -5,6 +5,7 @@ Repository of files to have a ZNC instance and backup log files into S3 bucket.
 ## Requirements
 - Python3
 - Docker
+- OpenSSL (1.1.1)
 - aws-cli
 - AWS account with S3 permissions
 - [Healthchecks.io](https://www.healthchecks.io) account
