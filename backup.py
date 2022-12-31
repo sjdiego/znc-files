@@ -10,8 +10,10 @@ import time
 from botocore.config import Config
 from botocore.exceptions import NoCredentialsError
 from datetime import datetime
+from subprocess import run
 
 DAYS = 7 # Number of days to backup
+PASS_ENV = "ENCRYPTION_PASS"
 
 def check_args():
     if len(sys.argv) != 5:
@@ -37,6 +39,10 @@ def check_args():
     bucket_name = sys.argv[3]
 
     healthcheck_url = sys.argv[4]
+
+    if os.getenv(PASS_ENV) is None:
+        print("No encryption password provided. Leaving...", os.linesep)
+        sys.exit(1)
 
     return source, backup_file, s3_filename, bucket_name, healthcheck_url
 
@@ -68,9 +74,32 @@ def delete_old_files(source):
 def create_backup(source, backup_file):
     print("Adding files to %s...\n" % backup_file)
 
+    os.chdir(source)
     with tarfile.open(backup_file, "w:gz") as tar:
-        tar.add(source)
+        tar.add(".")
     tar.close()
+
+
+def encrypt_file(backup_file):
+    print("Encrypting backup file %s...\n" % backup_file)
+
+    encrypted_file = backup_file + ".encrypted"
+
+    result = run([
+        "openssl",
+        "enc", "-aes-256-cbc", "-md", "sha512",
+        "-pbkdf2", "-iter", "100000",
+        "-pass", "env:" + PASS_ENV, "-salt",
+        "-in", backup_file,
+        "-out", encrypted_file
+    ])
+
+    if result.returncode != 0:
+        print("Error when encrypting backup file. Returning unencrypted file", os.linesep)
+        return backup_file
+
+    print("Encryption successful!", os.linesep)
+    return encrypted_file
 
 def upload_to_aws(local_file, bucket, s3_file):
     def_config = Config(
@@ -104,6 +133,7 @@ def main():
 
     delete_old_files(source)
     create_backup(source, backup_file)
+    backup_file = encrypt_file(backup_file)
     upload_to_aws(backup_file, bucket_name, s3_filename)
 
     requests.get(healthcheck_url)
