@@ -10,10 +10,12 @@ import time
 from botocore.config import Config
 from botocore.exceptions import NoCredentialsError
 from datetime import datetime
+from math import floor
 from subprocess import run
 
-DAYS = 7 # Number of days to backup
+DAYS = 7  # Number of days to backup
 PASS_ENV = "ENCRYPTION_PASS"
+
 
 def check_args():
     if len(sys.argv) != 5:
@@ -45,6 +47,7 @@ def check_args():
         sys.exit(1)
 
     return source, backup_file, s3_filename, bucket_name, healthcheck_url
+
 
 def delete_old_files(source):
     current_timestamp = time.time()
@@ -98,8 +101,10 @@ def encrypt_file(backup_file):
         print("Error when encrypting backup file. Returning unencrypted file", os.linesep)
         return backup_file
 
-    print("Encryption successful!", os.linesep)
+    print("Encryption successful", os.linesep)
+    os.remove(backup_file)  # Delete unencrypted file
     return encrypted_file
+
 
 def upload_to_aws(local_file, bucket, s3_file):
     def_config = Config(
@@ -115,15 +120,18 @@ def upload_to_aws(local_file, bucket, s3_file):
 
     try:
         s3.upload_file(local_file, bucket, s3_file)
-        print("Upload Successful", os.linesep)
-        os.remove(local_file)
+        print("[AWS] Upload successful", os.linesep)
+        os.remove(local_file)  # Delete locally uploaded file
     except FileNotFoundError:
-        print("The file was not found", os.linesep)
+        print("[AWS] Backup file not found. Unable to upload to S3", os.linesep)
+        sys.exit(1)
     except NoCredentialsError:
-        print("Credentials not available", os.linesep)
+        print("[AWS] Credentials not available", os.linesep)
+        sys.exit(1)
 
 
 def main():
+    start_time = time.time()
     source, backup_file, s3_filename, bucket_name, healthcheck_url = check_args()
 
     try:
@@ -137,5 +145,8 @@ def main():
     upload_to_aws(backup_file, bucket_name, s3_filename)
 
     requests.get(healthcheck_url)
+    total_time = time.time() - start_time
+    print("Done in " + str(round(total_time, 5)) + "sec.")
+
 
 main()
